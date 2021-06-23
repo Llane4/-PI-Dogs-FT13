@@ -1,0 +1,101 @@
+.container{
+
+    display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+
+
+
+background-color: #ffffffb9;
+;
+}
+
+.dogoimg{
+    width: 10em;
+    height: 10em;
+}
+.card{
+    border: 3px;
+    border-color: black;
+    max-width:13em;
+    max-height:23em;
+}
+.texto{
+    display:block;
+    flex-wrap: wrap;
+    
+    ;
+
+}
+.boton{
+    display:table,
+}
+.imagen{
+    background-color: black;
+    border-radius: 100%;
+    width:3rem;
+    height: 3rem;
+}
+.home{
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    align-items: center;
+    justify-content: center;
+    background:#fff;
+    background-image: url(https://t4.ftcdn.net/jpg/02/66/20/37/360_F_266203795_oI5uO0591zFINUsYh7UHuLXolrj9qEAU.jpg);
+}
+.button1{
+  display: inline-flex;
+  justify-self: center;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 180px;
+  height: 55px;
+  font-size: 19px;
+  font-family: 'Montserrat', sans-serif;
+  border-radius: 40px;
+  border-color: black;
+  background-color: white;
+  color:black;
+  transition: transform 1.65s;
+  
+}
+.button2{
+    cursor: pointer;
+    border-radius: 6px;
+    
+}
+.button2:active{
+    background: lighten(#202020);
+}
+.button1:hover{
+     background-color: black;
+    color:white
+}
+.sidebar{
+    width:5rem;
+    overflow-y: scroll;
+    display: flex;
+  flex-direction: row;
+  height: 100%;
+    flex: 1;
+    position: fixed;
+    background-color: brown;
+
+}
+.sidebar:hover{
+    width: 10rem;
+}
+.sidebar-text{
+    left: 100%;
+    text-align: left;
+}
+
+.articl{
+    display: flex;
+    justify-content: center;
+}

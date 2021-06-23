@@ -1,0 +1,8 @@
+export const ActionTypes={
+    SET_DOGS:"SET_DOGS",
+    SELECT_DOGS:"SELECT_DOGS",
+    SET_TEMPS:"SET_TEMPS",
+    SELECT_TEMPS:"SELECT_TEMPS",
+    RESET_TEMPS:"RESET_TEMPS"
+
+}

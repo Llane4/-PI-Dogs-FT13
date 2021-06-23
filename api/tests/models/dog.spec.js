@@ -17,6 +17,8 @@ describe('Dog model', () => {
       it('should work when its a valid name', () => {
         Dog.create({ name: 'Pug' });
       });
+      
+      
     });
   });
 });

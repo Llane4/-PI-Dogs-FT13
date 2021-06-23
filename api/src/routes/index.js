@@ -1,6 +1,9 @@
 const axios = require('axios');
 const {Router} = require('express');
+var Sequelize = require("sequelize")
+const { v4:uuidv4} =require('uuid')
 const {Temperament, Dog} = require("../db")
+
 // Importar todos los routers;
 // Ejemplo: const authRouter = require('./auth.js');
 
@@ -9,7 +12,7 @@ const router = Router();
 var PrimIns = true;
 router.get('/dogs', (req, res) => {
     
-    if (req.query.hasOwnProperty("name")) {
+    if (req.query.hasOwnProperty("name") && req.query.name!=="") {
         var quer = req.query.name
         var split = quer.split(" ")
         for (var i = 0; i < split.length; i++) {
@@ -21,7 +24,7 @@ router.get('/dogs', (req, res) => {
                 var dat = response.data
                 var tempo = []
                 for (var i = 0; i < dat.length; i++) {
-                    if (dat[i].name.includes(quer) && tempo.length < 8) {
+                    if (dat[i].name.includes(quer) && tempo.length < 100) {
                         tempo.push(dat[i])
                     }
                 }
@@ -34,13 +37,14 @@ router.get('/dogs', (req, res) => {
     } else
         axios.get('https://api.thedogapi.com/v1/breeds?api_key=1b79416c-09f0-4b91-a101-485544e8064c')
         .then(response => {
-            var dat = response.data.slice(0, 7)
+            var dat = response.data.slice(0, 8)
             var tempo = []
             for (var i = 0; i < dat.length; i++) {
                 var obj = {
                     name: dat[i].name,
                     image: dat[i].image.url,
-                    temperament: dat[i].temperament
+                    temperament: dat[i].temperament,
+                    id: dat[i].id
                 }
                 tempo.push(obj)
             }
@@ -51,10 +55,46 @@ router.get('/dogs', (req, res) => {
         }))
 })
 
-router.get('/dogs/:idRaza', (req, res) => {
+router.get('/alldogs', async (req, res) => {
+    const dogsss=await  Dog.findAll({attributes:{exclude:["createdAt","updatedAt"]}})
+  
+    
+    
+    await axios.get(`https://api.thedogapi.com/v1/breeds?api_key=1b79416c-09f0-4b91-a101-485544e8064c`)
+        .then(response => {
+            var dat = response.data
+            var arr= dat.concat(dogsss)
+          
+            return res.send(arr)}
+        )
+        .catch(error => res.status(500).json({
+            error: "ups"
+        }))
+})
 
+
+
+router.get('/dogs/:idRaza', async (req, res) => {
     var idR = req.params.idRaza
-    axios.get(`https://api.thedogapi.com/v1/breeds/${idR}?api_key=1b79416c-09f0-4b91-a101-485544e8064c`)
+    if(idR.length>10){
+     const dogsss= await Dog.findOne({
+        where: {id: idR} ,
+        attributes:{exclude:["createdAt","updatedAt"]
+      }})
+       
+        if(dogsss){
+            var temp={
+                name:dogsss.dataValues.name,
+                weight:{metric:dogsss.dataValues.weight},
+                height:{metric:dogsss.dataValues.height},
+                life_span:dogsss.dataValues.life_span,
+                image:dogsss.dataValues.image,
+                temperament:dogsss.dataValues.temperament
+                
+            }
+            return res.json(temp)}
+      }
+    await axios.get(`https://api.thedogapi.com/v1/breeds/${idR}?api_key=1b79416c-09f0-4b91-a101-485544e8064c`)
         .then(response => {
             console.log("hola",response.data)
             if(response.data.name){
@@ -74,9 +114,9 @@ router.get('/dogs/:idRaza', (req, res) => {
                 return res.send("No existe una raza de perro con ese ID")
             }
         })
-        .catch(error => res.status(500).json({
-            error: "ups"
-        }))
+        .catch((error )=> {
+                return res.statusCode(404)
+        })
 })
 
 router.get('/temperament/', (req, res) => {
@@ -121,16 +161,16 @@ router.get('/temperament/', (req, res) => {
 })
 
 router.post('/dog/', (req,res)=>{
-    if(!req.body.name || !req.body.life_span || !req.body.id || !req.body.height || !req.body.weight){
+    if(!req.body.name || !req.body.life_span || !req.body.height || !req.body.weight){
     return res.send("No se agrego el perro")}
-    if(req.body.temperament){
-        
-    }
+    
     Dog.findOrCreate({where: { 
         name: req.body.name,
         life_span:req.body.life_span,
-        id:req.body.id,
+        id: uuidv4(),
         height:req.body.height,
+        temperament:req.body.temperament,
+        image:req.body.image,
         weight:req.body.weight}})
     return res.send("Se agrego el perro")
 })
